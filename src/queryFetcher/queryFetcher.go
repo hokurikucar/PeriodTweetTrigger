@@ -2,7 +2,9 @@ package queryFetcher
 
 import (
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -22,17 +24,21 @@ func NewArticleObject() *Article {
 }
 
 // FetchArticles 記事のタイトルとURLを取得してオブジェクトに格納する
-func (a *Article) FetchArticles() {
+func (a *Article) FetchArticles() error {
+
+	// 取得する記事の番号をランダムに設定
+	rand.Seed(time.Now().UnixNano())
+	articleIndex := rand.Intn(9)
 
 	// Webサイトへのリクエスト
 	res, err := http.Get(hokurikuCarURL)
 	if err != nil {
-		log.Fatal("Http Request Error: %s", err)
+		return err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		log.Fatal("Response from website is not 200: %d %s", res.StatusCode, res.Status)
+		return err
 	}
 
 	// HTMLドキュメントの取得
@@ -45,10 +51,10 @@ func (a *Article) FetchArticles() {
 		title := s.Text()
 		url, _ := s.Attr("href")
 
-		if i == 3 {
+		if i == articleIndex {
 			a.Title = title
 			a.URL = url
 		}
 	})
-	log.Println("%+v", a)
+	return nil
 }
