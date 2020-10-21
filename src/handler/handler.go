@@ -4,17 +4,19 @@ import (
 	"log"
 
 	q "github.com/hokurikucar/PeriodTweetTrigger/src/queryFetcher"
+	t "github.com/hokurikucar/PeriodTweetTrigger/src/tweet"
 )
 
 // Handler Lambda関数のtrigger
 func Handler() {
-	log.Println("処理開始")
-
-	log.Println("記事の取得処理を開始")
 	a := q.NewArticleObject()
 	if err := a.FetchArticles(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Fetching articles error: %+v", err)
 	}
-	log.Println("%+v", a)
-	log.Println("記事の取得処理を終了")
+
+	if err := t.Tweet(a.Title, a.URL); err != nil {
+		log.Fatal("Posting tweet error: %+v", err)
+	}
+
+	log.Println("Completed to tweet!")
 }
