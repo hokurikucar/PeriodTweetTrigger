@@ -18,7 +18,7 @@ type TweetAPICredentialGeneratorMock struct {
 // エラーを意図的に起こすために、第一引数に特定の文字列を受け取った場合にエラーを生成して返却する
 func (tcg *TweetAPICredentialGeneratorMock) PostTweet(c string, n url.Values) (anaconda.Tweet, error) {
 	var t anaconda.Tweet
-	if c == "invalid tweet \n dummyURL" {
+	if c == "invalid tweet\ndummyURL" {
 		return t, errors.New("dummy tweet error")
 	}
 	return t, nil
@@ -43,8 +43,8 @@ func TestTweet(t *testing.T) {
 		},
 		{
 			name:    "記事の投稿に失敗した場合にエラーを返すこと",
-			args:    args{text: "invalid tweeet", url: "dummyURL"},
-			wantErr: false,
+			args:    args{text: "invalid tweet", url: "dummyURL"},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
