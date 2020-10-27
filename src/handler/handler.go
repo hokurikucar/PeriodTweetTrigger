@@ -9,12 +9,12 @@ import (
 
 // Handler Lambda関数のtrigger
 func Handler() {
-	a := p.NewArticleObject()
-	if err := a.FetchArticles(); err != nil {
+	po := p.NewPostObject()
+	if err := po.FetchPosts(); err != nil {
 		log.Fatal("Fetching articles error: %+v", err)
 	}
 
-	if err := t.Tweet(a.Title, a.URL); err != nil {
+	if err := t.Tweet(po.Title, po.URL); err != nil {
 		log.Fatal("Posting tweet error: %+v", err)
 	}
 
