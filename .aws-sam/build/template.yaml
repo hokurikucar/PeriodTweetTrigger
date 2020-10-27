@@ -5,6 +5,15 @@ Description: 'PeriodTweetTrigger
   Sample SAM Template for PeriodTweetTrigger
 
   '
+Params:
+  TwitterAPIKey:
+    Type: String
+  TwitterSecretKey:
+    Type: String
+  TwitterAccessToken:
+    Type: String
+  TwitterAccessTokenSecret:
+    Type: String
 Globals:
   Function:
     Timeout: 5
@@ -18,4 +27,11 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          PARAM1: VALUE
+          TWITTER_API_KEY:
+            Fn::Refs: TwitterAPIKey
+          TWITTER_SECRET_KEY:
+            Fn::Refs: TwitterSecretKey
+          TWITTER_ACCESS_TOKEN:
+            Fn::Refs: TwitterAccessToken
+          TWITTER_ACCESS_TOKEN_SECRET:
+            Fn::Refs: TwitterAccessTokenSecret
