@@ -7,11 +7,6 @@ import (
 	"github.com/ChimeraCoder/anaconda"
 )
 
-// Credential ツイートに必要な情報を持つオブジェクト
-type Credential struct {
-	credit *anaconda.TwitterApi
-}
-
 // TwitterAPICredentialGenerator PostTweetメソッドをWrapするためのinterface
 type TwitterAPICredentialGenerator interface {
 	PostTweet(string, url.Values) (anaconda.Tweet, error)
