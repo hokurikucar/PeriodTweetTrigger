@@ -25,6 +25,14 @@ Resources:
       Handler: handler
       Runtime: go1.x
       Tracing: Active
+      Events:
+        CatchAll:
+          Type: Schedule
+          Properties:
+            Schedule: rate(8 hours)
+            Name: PeriodTweetSchedule
+            Description: For Hokurikucar bot
+            Enable: true
       Environment:
         Variables:
           TWITTER_API_KEY:
