@@ -11,12 +11,11 @@ import (
 func Handler() {
 	po := p.NewPostObject()
 	if err := po.FetchPosts(); err != nil {
-		log.Fatal("Fetching articles error: %+v", err)
+		log.Fatal(err)
 	}
-
-	if err := t.Tweet(po.Title, po.URL); err != nil {
-		log.Fatal("Posting tweet error: %+v", err)
+	c := t.GetTwitterCredential()
+	if err := c.Tweet(po.Title, po.URL); err != nil {
+		log.Fatal(err)
 	}
-
 	log.Println("Completed to tweet!")
 }
