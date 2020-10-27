@@ -1,4 +1,4 @@
-package queryFetcher
+package post
 
 import (
 	"math/rand"

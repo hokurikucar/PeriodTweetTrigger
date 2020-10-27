@@ -3,13 +3,13 @@ package handler
 import (
 	"log"
 
-	q "github.com/hokurikucar/PeriodTweetTrigger/src/queryFetcher"
+	p "github.com/hokurikucar/PeriodTweetTrigger/src/post"
 	t "github.com/hokurikucar/PeriodTweetTrigger/src/tweet"
 )
 
 // Handler Lambda関数のtrigger
 func Handler() {
-	a := q.NewArticleObject()
+	a := p.NewArticleObject()
 	if err := a.FetchArticles(); err != nil {
 		log.Fatal("Fetching articles error: %+v", err)
 	}
