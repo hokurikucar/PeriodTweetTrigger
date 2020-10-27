@@ -12,11 +12,18 @@ import (
 const hokurikuCarURL = "https://hokurikucar.com/"
 const postSelectorPath = "article > div > h2 > a"
 
+// RandomNumberGenerator 引数として与えられた数値の範囲で乱数を生成するインタフェース
+type RandomNumberGenerator interface {
+	Intn(n int) int
+}
+
 // Post 記事の情報を格納するオブジェクト
 type Post struct {
 	Title string
 	URL   string
 }
+
+var rng RandomNumberGenerator = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // NewPostObject 取得した記事情報を格納するオブジェクトを生成して返却する
 func NewPostObject() *Post {
@@ -56,12 +63,10 @@ func (p *Post) FetchPosts() error {
 
 // getPagenationNumber どのページの記事を取得するかを決定する
 func getPagenationNumber() int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(4)
+	return rng.Intn(4) + 1 // 0番のページネーションは存在しないため
 }
 
 // getPostIndexNumber どのインデックス番号の記事を取得するかを決定する
 func getPostIndexNumber() int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(9)
+	return rng.Intn(9)
 }
