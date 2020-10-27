@@ -1,9 +1,9 @@
 package queryFetcher
 
 import (
-	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -25,26 +25,21 @@ func NewArticleObject() *Article {
 
 // FetchArticles 記事のタイトルとURLを取得してオブジェクトに格納する
 func (a *Article) FetchArticles() error {
-
-	// 取得する記事の番号をランダムに設定
-	rand.Seed(time.Now().UnixNano())
-	articleIndex := rand.Intn(9)
-
+	pagenationIndex := getPagenationNumber()
+	articleIndex := getArticleIndexNumber()
 	// Webサイトへのリクエスト
-	res, err := http.Get(hokurikuCarURL)
+	res, err := http.Get(hokurikuCarURL + "/page/" + strconv.Itoa(pagenationIndex))
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
-
 	if res.StatusCode != 200 {
 		return err
 	}
-
 	// HTMLドキュメントの取得
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		log.Fatal("Load HTML Document Error: %s", err)
+		return err
 	}
 	doc.Find(articleSelectorPath).Each(func(i int, s *goquery.Selection) {
 		// 取得できた記事１つ１つに対する処理
@@ -57,4 +52,16 @@ func (a *Article) FetchArticles() error {
 		}
 	})
 	return nil
+}
+
+// getPagenationNumber どのページの記事を取得するかを決定する
+func getPagenationNumber() int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(4)
+}
+
+// getArticleIndexNumber どのインデックス番号の記事を取得するかを決定する
+func getArticleIndexNumber() int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(9)
 }
