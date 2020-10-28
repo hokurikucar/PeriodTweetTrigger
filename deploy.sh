@@ -1,0 +1,1 @@
+sam deploy --parameter-overrides APIKey=$TWITTER_API_KEY SecretKey=$TWITTER_SECRET_KEY AccessToken=$TWITTER_ACCESS_TOKEN AccessTokenSecret=$TWITTER_ACCESS_TOKEN_SECRET

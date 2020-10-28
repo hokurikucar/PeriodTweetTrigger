@@ -5,14 +5,14 @@ Description: 'PeriodTweetTrigger
   Sample SAM Template for PeriodTweetTrigger
 
   '
-Params:
-  TwitterAPIKey:
+Parameters:
+  APIKey:
     Type: String
-  TwitterSecretKey:
+  SecretKey:
     Type: String
-  TwitterAccessToken:
+  AccessToken:
     Type: String
-  TwitterAccessTokenSecret:
+  AccessTokenSecret:
     Type: String
 Globals:
   Function:
@@ -29,17 +29,17 @@ Resources:
         CatchAll:
           Type: Schedule
           Properties:
-            Schedule: rate(8 hours)
+            Schedule: rate(3 hours)
             Name: PeriodTweetSchedule
             Description: For Hokurikucar bot
-            Enable: true
+            Enabled: true
       Environment:
         Variables:
           TWITTER_API_KEY:
-            Fn::Refs: TwitterAPIKey
+            Ref: APIKey
           TWITTER_SECRET_KEY:
-            Fn::Refs: TwitterSecretKey
+            Ref: SecretKey
           TWITTER_ACCESS_TOKEN:
-            Fn::Refs: TwitterAccessToken
+            Ref: AccessToken
           TWITTER_ACCESS_TOKEN_SECRET:
-            Fn::Refs: TwitterAccessTokenSecret
+            Ref: AccessTokenSecret
