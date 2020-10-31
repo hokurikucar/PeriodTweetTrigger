@@ -1,6 +1,7 @@
 package tweet
 
 import (
+	"errors"
 	"net/url"
 	"os"
 	"strings"
@@ -23,6 +24,10 @@ var tw TwitterAPICredentialGenerator = anaconda.NewTwitterApiWithCredentials(
 
 // Tweet APIにて連携済みのtwitterアカウントにツイートを送信する
 func Tweet(text string, url string, tags []string) error {
+	// 記事にタグをつけない可能性があるので、タグの空判定は行わない
+	if text == "" || url == "" {
+		return errors.New("Invalid parameter received")
+	}
 	tagContent := strings.Join(tags, " ")
 	tweetContent := text + "\n" + url + "\n" + tagContent
 	_, err := tw.PostTweet(tweetContent, nil)
