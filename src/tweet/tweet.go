@@ -3,6 +3,7 @@ package tweet
 import (
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/ChimeraCoder/anaconda"
 )
@@ -21,8 +22,9 @@ var tw TwitterAPICredentialGenerator = anaconda.NewTwitterApiWithCredentials(
 )
 
 // Tweet APIにて連携済みのtwitterアカウントにツイートを送信する
-func Tweet(text string, url string) error {
-	tweetContent := text + "\n" + url
+func Tweet(text string, url string, tags []string) error {
+	tagContent := strings.Join(tags, " ")
+	tweetContent := text + "\n" + url + "\n" + tagContent
 	_, err := tw.PostTweet(tweetContent, nil)
 	if err != nil {
 		return err

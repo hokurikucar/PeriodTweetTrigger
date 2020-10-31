@@ -81,8 +81,8 @@ func getPostIndexNumber() int {
 // 指定のHTMLドキュメントより、タグ情報を取得
 func fetchTags(d *goquery.Document) []string {
 	var tags []string
-	d.Find("div.viral__contents > ul > li.icon-tag").Each(func(i int, s *goquery.Selection) {
-		tags = append(tags, s.Text())
+	d.Find("div.viral__contents > ul > li.icon-tag > a").Each(func(i int, s *goquery.Selection) {
+		tags = append(tags, "#"+s.Text())
 	})
 	return tags
 }

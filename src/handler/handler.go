@@ -13,7 +13,7 @@ func Handler() {
 	if err := po.FetchPosts(); err != nil {
 		log.Fatal(err)
 	}
-	if err := t.Tweet(po.Title, po.URL); err != nil {
+	if err := t.Tweet(po.Title, po.URL, po.Tags); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Completed to tweet!")
