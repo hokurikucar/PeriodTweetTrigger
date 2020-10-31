@@ -30,7 +30,7 @@ Resources:
         CatchAll:
           Type: Schedule
           Properties:
-            Schedule: 'rate(3 hours)'
+            Schedule: 'rate(5 hours)'
             Name: PeriodTweetSchedule
             Description: For Hokurikucar bot
             Enabled: True
