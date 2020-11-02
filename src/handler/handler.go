@@ -10,7 +10,8 @@ import (
 // Handler Lambda関数のtrigger
 func Handler() {
 	po := p.NewPostObject()
-	if err := po.FetchPosts(); err != nil {
+	fw := p.NewPostFetchWorker()
+	if err := fw.FetchPosts(po); err != nil {
 		log.Fatal(err)
 	}
 	if err := t.Tweet(po.Title, po.URL, po.Tags); err != nil {

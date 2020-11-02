@@ -18,6 +18,17 @@ type RandomNumberGenerator interface {
 	Intn(n int) int
 }
 
+// Fetcher 記事の取得に関する動作を定義したinterface
+type Fetcher interface {
+	choosePostURLRandomly() (string, error)
+	getTitleAndTags(url string) (string, []string, error)
+}
+
+// FetchWorker 記事の取得に関する動作をWrapするためのオブジェクト
+type FetchWorker struct {
+	fetcher Fetcher
+}
+
 // Post 記事の情報を格納するオブジェクト
 type Post struct {
 	Title string
@@ -32,40 +43,58 @@ func NewPostObject() *Post {
 	return &Post{}
 }
 
+// NewPostFetchWorker 記事取得のinterfaceをwrapしたオブジェクトを返却する
+func NewPostFetchWorker() *FetchWorker {
+	return &FetchWorker{&Post{}}
+}
+
 // FetchPosts 記事のタイトルとURLを取得してオブジェクトに格納する
-func (p *Post) FetchPosts() error {
+func (fw *FetchWorker) FetchPosts(p *Post) error {
 	// 将来的に、管理者アプリから指定されたURLにリクエストを送る予定
 	// 管理者アプリが完成するまで、もしくはアプリ側でURLが指定されていなかった場合に
 	// ランダムで記事を取得する関数を呼ぶ
-	if err := p.choosePostURLRandomly(); err != nil {
-		return err
-	}
-	// URLより、タイトルとタグの取得を行う
-	doc, err := execQuery(p.URL)
+	url, err := fw.fetcher.choosePostURLRandomly()
 	if err != nil {
 		return err
 	}
-	p.Title = doc.Find("div.viral__contents > h1").Text()
-	p.Tags = fetchTags(doc)
+	p.URL = url
+	title, tags, err := fw.fetcher.getTitleAndTags(p.URL)
+	if err != nil {
+		return err
+	}
+	p.Title = title
+	p.Tags = tags
 	return nil
 }
 
 // choosePostURLRandomly 北陸くるま情報サイトより、ランダムで１つ記事のURLを取得する
 // このメソッドは、管理者アプリよりURLの指定が無かった場合にのみ呼び出される
-func (p *Post) choosePostURLRandomly() error {
+func (p *Post) choosePostURLRandomly() (string, error) {
 	pagenationIndex := getPagenationNumber()
 	postIndex := getPostIndexNumber()
+	var url string
 	// Webサイトへのリクエスト
 	doc, err := execQuery(hokurikuCarURL + "/page/" + strconv.Itoa(pagenationIndex))
 	if err != nil {
-		return err
+		return "", err
 	}
 	doc.Find(postSelectorPath).Each(func(i int, s *goquery.Selection) {
 		if i == postIndex {
-			p.URL, _ = s.Attr("href")
+			url, _ = s.Attr("href")
 		}
 	})
-	return nil
+	return url, nil
+}
+
+func (p *Post) getTitleAndTags(url string) (string, []string, error) {
+	// URLより、タイトルとタグの取得を行う
+	doc, err := execQuery(url)
+	if err != nil {
+		return "", nil, err
+	}
+	title := doc.Find("div.viral__contents > h1").Text()
+	tags := fetchTags(doc)
+	return title, tags, nil
 }
 
 // getPagenationNumber どのページの記事を取得するかを決定する
