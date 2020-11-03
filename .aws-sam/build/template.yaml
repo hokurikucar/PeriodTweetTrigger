@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'PeriodTweetTrigger
+
+  Sample SAM Template for PeriodTweetTrigger
+
+  '
+Parameters:
+  APIKey:
+    Type: String
+  SecretKey:
+    Type: String
+  AccessToken:
+    Type: String
+  AccessTokenSecret:
+    Type: String
+Globals:
+  Function:
+    Timeout: 5
+Resources:
+  PeriodTweetTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PeriodTweetTrigger
+      Handler: handler
+      Runtime: go1.x
+      Tracing: Active
+      Events:
+        CatchAll:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 hours)
+            Name: PeriodTweetSchedule
+            Description: For Hokurikucar bot
+            Enabled: true
+      Environment:
+        Variables:
+          TWITTER_API_KEY:
+            Ref: APIKey
+          TWITTER_SECRET_KEY:
+            Ref: SecretKey
+          TWITTER_ACCESS_TOKEN:
+            Ref: AccessToken
+          TWITTER_ACCESS_TOKEN_SECRET:
+            Ref: AccessTokenSecret
