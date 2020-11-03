@@ -93,17 +93,6 @@ func (p *Post) choosePostURLRandomly() (string, error) {
 	return url, nil
 }
 
-func (p *Post) getTitleAndTags(url string) (string, []string, error) {
-	// URLより、タイトルとタグの取得を行う
-	doc, err := execQuery(url)
-	if err != nil {
-		return "", nil, err
-	}
-	title := doc.Find("div.viral__contents > h1").Text()
-	tags := fetchTags(doc)
-	return title, tags, nil
-}
-
 // getPagenationNumber どのページの記事を取得するかを決定する
 func getPagenationNumber() int {
 	return rng.Intn(4) + 1 // 0番のページネーションは存在しないため
@@ -114,13 +103,18 @@ func getPostIndexNumber() int {
 	return rng.Intn(9)
 }
 
-// 指定のHTMLドキュメントより、タグ情報を取得
-func fetchTags(d *goquery.Document) []string {
+// getTitleAndTags URLより、タイトルとタグの取得を行う
+func (p *Post) getTitleAndTags(url string) (string, []string, error) {
 	var tags []string
-	d.Find("div.viral__contents > ul > li.icon-tag > a").Each(func(i int, s *goquery.Selection) {
+	doc, err := execQuery(url)
+	if err != nil {
+		return "", nil, err
+	}
+	title := doc.Find("div.viral__contents > h1").Text()
+	doc.Find("div.viral__contents > ul > li.icon-tag > a").Each(func(i int, s *goquery.Selection) {
 		tags = append(tags, "#"+s.Text())
 	})
-	return tags
+	return title, tags, nil
 }
 
 // execQuery URLを基にスクレイピングを行い、HTMLドキュメントを取得する

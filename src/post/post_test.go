@@ -203,26 +203,6 @@ func TestPost_getTitleAndTags(t *testing.T) {
 	}
 }
 
-func Test_fetchTags(t *testing.T) {
-	type args struct {
-		d *goquery.Document
-	}
-	tests := []struct {
-		name string
-		args args
-		want []string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := fetchTags(tt.args.d); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fetchTags() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_execQuery(t *testing.T) {
 	type args struct {
 		url string
