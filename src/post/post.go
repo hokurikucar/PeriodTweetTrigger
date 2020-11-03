@@ -24,9 +24,14 @@ type Fetcher interface {
 	getTitleAndTags(url string) (string, []string, error)
 }
 
+type QueryWorker interface {
+	fetchTags(d *goquery.Document) []string
+}
+
 // FetchWorker 記事の取得に関する動作をWrapするためのオブジェクト
 type FetchWorker struct {
 	fetcher Fetcher
+	//queryWorker QueryWorker
 }
 
 // Post 記事の情報を格納するオブジェクト
@@ -50,14 +55,16 @@ func NewPostFetchWorker() *FetchWorker {
 
 // FetchPosts 記事のタイトルとURLを取得してオブジェクトに格納する
 func (fw *FetchWorker) FetchPosts(p *Post) error {
-	// 将来的に、管理者アプリから指定されたURLにリクエストを送る予定
-	// 管理者アプリが完成するまで、もしくはアプリ側でURLが指定されていなかった場合に
-	// ランダムで記事を取得する関数を呼ぶ
-	url, err := fw.fetcher.choosePostURLRandomly()
-	if err != nil {
-		return err
+	if p.URL == "" {
+		// 将来的に、管理者アプリから指定されたURLにリクエストを送る予定
+		// 管理者アプリが完成するまで、もしくはアプリ側でURLが指定されていなかった場合に
+		// ランダムで記事を取得する関数を呼ぶ
+		url, err := fw.fetcher.choosePostURLRandomly()
+		if err != nil {
+			return err
+		}
+		p.URL = url
 	}
-	p.URL = url
 	title, tags, err := fw.fetcher.getTitleAndTags(p.URL)
 	if err != nil {
 		return err

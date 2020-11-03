@@ -1,6 +1,7 @@
 package post
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -26,6 +27,9 @@ func (f *FetcherMock) choosePostURLRandomly() (string, error) {
 	return "dummyURL", nil
 }
 func (f *FetcherMock) getTitleAndTags(url string) (string, []string, error) {
+	if url == "error" {
+		return "", nil, errors.New("mock error occured")
+	}
 	var dummyTags = []string{"hoge", "fuga"}
 	return "dummyTitle", dummyTags, nil
 }
@@ -34,6 +38,7 @@ func TestPost_FetchPosts(t *testing.T) {
 	type fields struct {
 		Title string
 		URL   string
+		Tags  []string
 	}
 	tests := []struct {
 		name    string
@@ -41,9 +46,31 @@ func TestPost_FetchPosts(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "記事を取得すること",
-			fields:  fields{},
+			name: "記事のURLが指定されなかった場合にランダムにURLを取得すること",
+			fields: fields{
+				Title: "",
+				URL:   "",
+				Tags:  nil,
+			},
 			wantErr: false,
+		},
+		{
+			name: "予め記事のURLが指定されている場合には、そのURLを基にタイトルとタグを取得すること",
+			fields: fields{
+				Title: "",
+				URL:   "dummyURL",
+				Tags:  nil,
+			},
+			wantErr: false,
+		},
+		{
+			name: "タイトルとタグの取得に失敗したときにエラーを返すこと",
+			fields: fields{
+				Title: "",
+				URL:   "error",
+				Tags:  nil,
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -101,66 +128,8 @@ func Test_getPostIndexNumber(t *testing.T) {
 	}
 }
 
-func TestNewPostObject(t *testing.T) {
-	tests := []struct {
-		name string
-		want *Post
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewPostObject(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewPostObject() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestNewPostFetchWorker(t *testing.T) {
-	tests := []struct {
-		name string
-		want *FetchWorker
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewPostFetchWorker(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewPostFetchWorker() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFetchWorker_FetchPosts(t *testing.T) {
-	type fields struct {
-		fetcher Fetcher
-	}
-	type args struct {
-		p *Post
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			fw := &FetchWorker{
-				fetcher: tt.fields.fetcher,
-			}
-			if err := fw.FetchPosts(tt.args.p); (err != nil) != tt.wantErr {
-				t.Errorf("FetchWorker.FetchPosts() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
 func TestPost_choosePostURLRandomly(t *testing.T) {
+	rng = &RandomNumberGeneratorMock{MockNumber: 1}
 	type fields struct {
 		Title string
 		URL   string
